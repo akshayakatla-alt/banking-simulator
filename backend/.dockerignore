@@ -1,0 +1,9 @@
+.env
+.env.*
+app.log
+build*/
+pgdata/
+pglog.log
+*.o
+*.exe
+Crow/

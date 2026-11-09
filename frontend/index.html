@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SJNA BANK – Online Banking Transaction Simulator</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏦</text></svg>">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-wrapper">
+        <div class="brand-icon">🏛️</div>
+        <div class="brand-info">
+          <h1>SJNA BANK</h1>
+          <span>Online Banking Simulator</span>
+        </div>
+      </div>
+
+      <!-- User controls when authenticated -->
+      <div class="header-user-section" id="header-user-section" style="display: none;">
+        <div class="user-badge">
+          <div class="user-avatar" id="user-header-avatar">S</div>
+          <span class="user-name" id="user-header-name">Customer</span>
+        </div>
+        <button class="btn-logout" id="btn-logout">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="app-body">
+
+    <!-- 1. AUTHENTICATION SECTION -->
+    <section class="auth-wrapper" id="auth-section">
+      <div class="auth-card">
+        <div class="auth-header-tabs">
+          <button class="auth-tab active" data-tab="login">Sign In</button>
+          <button class="auth-tab" data-tab="register">New Customer Registration</button>
+        </div>
+
+        <div class="auth-form-content">
+          <!-- Sign In Form -->
+          <form id="form-login">
+            <div class="auth-hero-desc">
+              <h2>Customer Portal</h2>
+              <p>Sign in to access your SJNA Bank accounts & transactions</p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="login-email">Email Address</label>
+              <input type="email" id="login-email" class="form-input" placeholder="e.g. customer@sjnabank.com" required value="demo@sjnabank.com">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="login-password">Password</label>
+              <input type="password" id="login-password" class="form-input" placeholder="Enter password (min 8 characters)" required value="Password@123">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">
+              Sign In to SJNA Bank
+            </button>
+          </form>
+
+          <!-- Register Form -->
+          <form id="form-register" style="display: none;">
+            <div class="auth-hero-desc">
+              <h2>Open Account</h2>
+              <p>Instant digital customer registration for SJNA Bank</p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-name">Full Legal Name</label>
+              <input type="text" id="reg-name" class="form-input" placeholder="e.g. Sai Akshaya" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-email">Email Address</label>
+              <input type="email" id="reg-email" class="form-input" placeholder="e.g. sai@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-phone">Mobile Phone (10 Digits)</label>
+              <input type="tel" id="reg-phone" class="form-input" placeholder="e.g. 9876543210" pattern="[0-9]{10}" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-password">Create Password</label>
+              <input type="password" id="reg-password" class="form-input" placeholder="Min. 8 characters" minlength="8" required>
+              <span class="form-help">Must be at least 8 characters long</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-initial-balance">Initial Savings Deposit (₹)</label>
+              <div class="input-with-symbol">
+                <span class="input-symbol">₹</span>
+                <input type="number" id="reg-initial-balance" class="form-input" value="5000" min="500" step="100" required>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">
+              Register Customer Account
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 2. MAIN LOGGED-IN DASHBOARD SECTION -->
+    <section id="dashboard-section" style="display: none;">
+
+      <!-- Top Greeting & Account Switcher -->
+      <div class="dashboard-top-bar">
+        <div class="top-bar-welcome">
+          <h2>Welcome back, <span id="user-greeting">Customer</span> 👋</h2>
+          <p>SJNA Bank Online Transaction & Fund Transfer Simulator</p>
+        </div>
+
+        <div class="account-selector-box">
+          <label class="form-label" style="margin-bottom:0;" for="account-select">Active Account:</label>
+          <select id="account-select" class="form-select" style="font-family: monospace; font-weight: 600; min-width: 250px;">
+            <option value="">Loading accounts...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="dashboard-nav">
+          <button class="nav-item active" data-view="dashboard">
+            <span class="icon">📊</span> Overview
+          </button>
+          <button class="nav-item" data-view="accounts">
+            <span class="icon">💳</span> Bank Accounts
+          </button>
+          <button class="nav-item" data-view="transfer">
+            <span class="icon">💸</span> Fund Transfer
+          </button>
+          <button class="nav-item" data-view="payments">
+            <span class="icon">⚡</span> Bill Payments
+          </button>
+          <button class="nav-item" data-view="atm">
+            <span class="icon">🏧</span> ATM Simulator
+          </button>
+          <button class="nav-item" data-view="history">
+            <span class="icon">📜</span> Transactions
+          </button>
+          <button class="nav-item" data-view="profile">
+            <span class="icon">⚙️</span> Profile Settings
+          </button>
+        </aside>
+
+        <!-- Right Main Viewport Area -->
+        <div class="dashboard-main">
+
+          <!-- VIEW: DASHBOARD OVERVIEW -->
+          <div class="view-section" id="view-dashboard">
+            <!-- Cards & Balance Summary Grid -->
+            <div class="cards-grid">
+              <!-- Virtual Debit Card -->
+              <div class="bank-card">
+                <div class="card-top">
+                  <span class="card-bank-title">SJNA BANK</span>
+                  <span class="card-badge" id="card-type-badge">SAVINGS A/C</span>
+                </div>
+                <div class="card-chip"></div>
+                <div class="card-acc-number" id="card-acc-number">•••• •••• •••• ••••</div>
+                <div class="card-bottom">
+                  <div>
+                    <span class="card-holder-label">Account Holder</span>
+                    <div class="card-holder-name" id="card-holder-name">CUSTOMER</div>
+                  </div>
+                  <div class="card-balance-box">
+                    <span class="card-balance-label">Available Balance</span>
+                    <div class="card-balance-value" id="card-balance">₹ 0.00</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Summary Stats -->
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="stat-card">
+                  <div class="stat-icon green">💰</div>
+                  <div class="stat-info">
+                    <p>Total Portfolio Balance</p>
+                    <h3 id="stat-total-balance">₹ 0.00</h3>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon blue">📈</div>
+                  <div class="stat-info">
+                    <p>Total Credits (Inflow)</p>
+                    <h3 id="stat-total-credit">₹ 0.00</h3>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon amber">📉</div>
+                  <div class="stat-info">
+                    <p>Total Debits (Outflow)</p>
+                    <h3 id="stat-total-debit">₹ 0.00</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="quick-actions-bar">
+              <div class="action-tile" onclick="window.navigateTo('transfer')">
+                <span class="tile-icon">💸</span>
+                <span>Send Money</span>
+              </div>
+              <div class="action-tile" onclick="window.navigateTo('payments')">
+                <span class="tile-icon">⚡</span>
+                <span>Pay Bills</span>
+              </div>
+              <div class="action-tile" onclick="window.navigateTo('atm')">
+                <span class="tile-icon">💵</span>
+                <span>Deposit / Cash</span>
+              </div>
+              <div class="action-tile" onclick="window.openCreateAccountModal()">
+                <span class="tile-icon">➕</span>
+                <span>New Account</span>
+              </div>
+              <div class="action-tile" onclick="window.navigateTo('history')">
+                <span class="tile-icon">📜</span>
+                <span>Passbook</span>
+              </div>
+            </div>
+
+            <!-- Recent Activity Table -->
+            <div class="content-card">
+              <div class="card-header-flex">
+                <h3>📜 Recent Account Transactions</h3>
+                <button class="btn btn-outline" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;" onclick="window.navigateTo('history')">
+                  View Full History &rarr;
+                </button>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Txn ID</th>
+                      <th>Date</th>
+                      <th>Type</th>
+                      <th>Sender</th>
+                      <th>Receiver</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Receipt</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboard-recent-txns-tbody">
+                    <tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No recent transactions.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- VIEW: ACCOUNTS MANAGEMENT -->
+          <div class="view-section" id="view-accounts" style="display: none;">
+            <div class="content-card">
+              <div class="card-header-flex">
+                <h3>💳 My Bank Accounts</h3>
+                <button class="btn btn-primary" onclick="window.openCreateAccountModal()">
+                  + Open New Bank Account
+                </button>
+              </div>
+              <div id="accounts-list-container">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+
+
+          <!-- VIEW: FUND TRANSFER -->
+          <div class="view-section" id="view-transfer" style="display: none;">
+            <div class="content-card" style="max-width: 680px; margin: 0 auto;">
+              <div class="card-header-flex">
+                <h3>💸 Intra-Bank Fund Transfer</h3>
+              </div>
+
+              <form id="form-transfer">
+                <div class="form-group">
+                  <label class="form-label" for="transfer-sender">Debit From Account</label>
+                  <select id="transfer-sender" class="form-select" required></select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="transfer-receiver">Beneficiary / Receiver Account Number</label>
+                  <input type="text" id="transfer-receiver" class="form-input" placeholder="e.g. SJNA10002" style="font-family: monospace; text-transform: uppercase;" required>
+                  <span class="form-help">Enter the 9-character SJNA Bank account number</span>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="transfer-amount">Transfer Amount (₹)</label>
+                  <div class="input-with-symbol">
+                    <span class="input-symbol">₹</span>
+                    <input type="number" id="transfer-amount" class="form-input" min="1" step="0.01" placeholder="0.00" required>
+                  </div>
+                  <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                    <button type="button" class="btn btn-outline quick-amount-pill" data-val="500" data-target="transfer-amount" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">₹500</button>
+                    <button type="button" class="btn btn-outline quick-amount-pill" data-val="1000" data-target="transfer-amount" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">₹1,000</button>
+                    <button type="button" class="btn btn-outline quick-amount-pill" data-val="2500" data-target="transfer-amount" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">₹2,500</button>
+                    <button type="button" class="btn btn-outline quick-amount-pill" data-val="5000" data-target="transfer-amount" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">₹5,000</button>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="transfer-remarks">Transfer Remarks / Purpose</label>
+                  <input type="text" id="transfer-remarks" class="form-input" placeholder="e.g. Tuition Fees, Rent, Project Expense">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">
+                  Review & Transfer Funds
+                </button>
+              </form>
+            </div>
+          </div>
+
+
+          <!-- VIEW: BILL PAYMENTS -->
+          <div class="view-section" id="view-payments" style="display: none;">
+            <div class="content-card" style="max-width: 720px; margin: 0 auto;">
+              <div class="card-header-flex">
+                <h3>⚡ Utility & Bill Payments Simulation</h3>
+              </div>
+
+              <!-- Bill Category Selector -->
+              <label class="form-label">Select Utility Category</label>
+              <div class="bill-category-grid">
+                <div class="bill-category-card selected" data-category="electricity">
+                  <span class="cat-icon">💡</span>
+                  <span class="cat-name">Electricity</span>
+                </div>
+                <div class="bill-category-card" data-category="water">
+                  <span class="cat-icon">💧</span>
+                  <span class="cat-name">Water Supply</span>
+                </div>
+                <div class="bill-category-card" data-category="mobile">
+                  <span class="cat-icon">📱</span>
+                  <span class="cat-name">Mobile Recharge</span>
+                </div>
+                <div class="bill-category-card" data-category="broadband">
+                  <span class="cat-icon">🌐</span>
+                  <span class="cat-name">Broadband</span>
+                </div>
+                <div class="bill-category-card" data-category="gas">
+                  <span class="cat-icon">🔥</span>
+                  <span class="cat-name">LPG Gas</span>
+                </div>
+                <div class="bill-category-card" data-category="dth">
+                  <span class="cat-icon">📺</span>
+                  <span class="cat-name">DTH Cable</span>
+                </div>
+              </div>
+
+              <!-- Bill Payment Form -->
+              <form id="form-bill-payment">
+                <div class="form-group">
+                  <label class="form-label" for="bill-account">Pay From Account</label>
+                  <select id="bill-account" class="form-select" required></select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" id="bill-provider-label" for="bill-provider">Electricity Board / Provider</label>
+                  <input type="text" id="bill-provider" class="form-input" placeholder="e.g. Tata Power, Adani Electricity, BESCOM" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" id="bill-consumer-label" for="bill-consumer-no">Consumer Number (CA Number)</label>
+                  <input type="text" id="bill-consumer-no" class="form-input" placeholder="e.g. 100984729" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="bill-amount">Bill Amount (₹)</label>
+                  <div class="input-with-symbol">
+                    <span class="input-symbol">₹</span>
+                    <input type="number" id="bill-amount" class="form-input" min="1" step="0.01" placeholder="0.00" required>
+                  </div>
+                  <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                    <button type="button" class="btn btn-outline quick-amount-pill" data-val="299" data-target="bill-amount" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">₹299</button>
+                    <button type="button" class="btn btn-outline quick-amount-pill" data-val="719" data-target="bill-amount" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">₹719</button>
+                    <button type="button" class="btn btn-outline quick-amount-pill" data-val="1250" data-target="bill-amount" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">₹1,250</button>
+                    <button type="button" class="btn btn-outline quick-amount-pill" data-val="2400" data-target="bill-amount" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">₹2,400</button>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">
+                  Pay Bill Securely
+                </button>
+              </form>
+            </div>
+          </div>
+
+
+          <!-- VIEW: ATM SIMULATOR (DEPOSIT & WITHDRAWAL) -->
+          <div class="view-section" id="view-atm" style="display: none;">
+            <div class="content-card" style="max-width: 780px; margin: 0 auto;">
+              <div class="card-header-flex">
+                <h3>🏧 Virtual ATM / Cash Counter Simulator</h3>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="atm-account">Select Bank Account</label>
+                <select id="atm-account" class="form-select" required></select>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+                <!-- Deposit Box -->
+                <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem;">
+                  <h4 style="font-weight: 700; color: var(--success); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+                    📥 Cash Deposit
+                  </h4>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                    Simulate cash deposit machine (CDM). Credits account instantly.
+                  </p>
+                  <form id="form-atm-deposit">
+                    <div class="form-group">
+                      <label class="form-label" for="atm-deposit-amount">Deposit Amount (₹)</label>
+                      <div class="input-with-symbol">
+                        <span class="input-symbol">₹</span>
+                        <input type="number" id="atm-deposit-amount" class="form-input" min="100" step="100" placeholder="e.g. 2000" required>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block">Deposit Money</button>
+                  </form>
+                </div>
+
+                <!-- Withdraw Box -->
+                <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem;">
+                  <h4 style="font-weight: 700; color: var(--danger); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+                    📤 ATM Cash Withdrawal
+                  </h4>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                    Simulate ATM dispensing cash. Verifies balance & overdraft limits.
+                  </p>
+                  <form id="form-atm-withdraw">
+                    <div class="form-group">
+                      <label class="form-label" for="atm-withdraw-amount">Withdrawal Amount (₹)</label>
+                      <div class="input-with-symbol">
+                        <span class="input-symbol">₹</span>
+                        <input type="number" id="atm-withdraw-amount" class="form-input" min="100" step="100" placeholder="e.g. 500" required>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="atm-pin">4-Digit ATM PIN</label>
+                      <input type="password" id="atm-pin" class="form-input" maxlength="4" placeholder="••••" required value="1234">
+                    </div>
+                    <button type="submit" class="btn btn-danger btn-block">Withdraw Cash</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- VIEW: TRANSACTION HISTORY -->
+          <div class="view-section" id="view-history" style="display: none;">
+            <div class="content-card">
+              <div class="card-header-flex">
+                <h3>📜 Account Transaction Passbook</h3>
+              </div>
+
+              <!-- Filter Bar -->
+              <div class="filter-bar">
+                <input type="text" id="history-search" class="form-input" placeholder="Search by Txn ID, Account...">
+                <select id="history-type-filter" class="form-select">
+                  <option value="ALL">All Transaction Types</option>
+                  <option value="Deposit">Deposits (+)</option>
+                  <option value="Withdrawal">Withdrawals (-)</option>
+                  <option value="Fund Transfer">Fund Transfers</option>
+                  <option value="Bill Payment">Bill Payments</option>
+                </select>
+                <select id="history-sort" class="form-select">
+                  <option value="DATE_DESC">Newest First</option>
+                  <option value="DATE_ASC">Oldest First</option>
+                  <option value="AMOUNT_DESC">Amount: High to Low</option>
+                  <option value="AMOUNT_ASC">Amount: Low to High</option>
+                </select>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Txn ID</th>
+                      <th>Date</th>
+                      <th>Type</th>
+                      <th>Sender</th>
+                      <th>Receiver</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Receipt</th>
+                    </tr>
+                  </thead>
+                  <tbody id="transaction-history-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- VIEW: PROFILE SETTINGS -->
+          <div class="view-section" id="view-profile" style="display: none;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <!-- Personal Details Card -->
+              <div class="content-card">
+                <div class="card-header-flex">
+                  <h3>👤 Customer Information</h3>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Customer ID</span>
+                  <div id="profile-id-display" style="font-size: 1.1rem; font-weight: 700; font-family: monospace; color: var(--primary);">-</div>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Full Name</span>
+                  <div id="profile-name-display" style="font-size: 1rem; font-weight: 600;">-</div>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Registered Email</span>
+                  <div id="profile-email-display" style="font-size: 1rem; font-weight: 600;">-</div>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Mobile Phone</span>
+                  <div id="profile-phone-display" style="font-size: 1rem; font-weight: 600;">-</div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.25rem 0;">
+
+                <form id="form-edit-profile">
+                  <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--primary);">Update Contact Info</h4>
+                  <div class="form-group">
+                    <label class="form-label" for="edit-profile-name">Full Legal Name</label>
+                    <input type="text" id="edit-profile-name" class="form-input" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="edit-profile-phone">Mobile Phone (10 digits)</label>
+                    <input type="tel" id="edit-profile-phone" class="form-input" pattern="[0-9]{10}" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">Save Profile Details</button>
+                </form>
+              </div>
+
+              <!-- Security & Password Card -->
+              <div class="content-card">
+                <div class="card-header-flex">
+                  <h3>🔒 Security & Password</h3>
+                </div>
+
+                <form id="form-change-password">
+                  <div class="form-group">
+                    <label class="form-label" for="pass-old">Current Password</label>
+                    <input type="password" id="pass-old" class="form-input" placeholder="Enter current password" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="pass-new">New Password</label>
+                    <input type="password" id="pass-new" class="form-input" placeholder="Min. 8 characters" minlength="8" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="pass-confirm">Confirm New Password</label>
+                    <input type="password" id="pass-confirm" class="form-input" placeholder="Re-enter new password" minlength="8" required>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">
+                    Update Password Securely
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- MODAL: CREATE BANK ACCOUNT -->
+  <div class="modal-overlay" id="modal-create-account">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Open New Bank Account</h3>
+        <button class="modal-close" onclick="window.closeModal('modal-create-account')">&times;</button>
+      </div>
+      <form id="form-create-account">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="new-account-type">Account Type</label>
+            <select id="new-account-type" class="form-select">
+              <option value="Savings">Savings Account (Standard 4.0% interest)</option>
+              <option value="Current">Current Account (Commercial with Overdraft)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="new-initial-balance">Initial Deposit Amount (₹)</label>
+            <div class="input-with-symbol">
+              <span class="input-symbol">₹</span>
+              <input type="number" id="new-initial-balance" class="form-input" value="1000" min="0" step="100" required>
+            </div>
+          </div>
+
+          <div class="form-group" id="group-overdraft-limit" style="display: none;">
+            <label class="form-label" for="new-overdraft-limit">Overdraft Protection Limit (₹)</label>
+            <div class="input-with-symbol">
+              <span class="input-symbol">₹</span>
+              <input type="number" id="new-overdraft-limit" class="form-input" value="10000" min="0" step="500">
+            </div>
+            <span class="form-help">Allows account balance to go negative up to this approved limit</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="window.closeModal('modal-create-account')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- MODAL: CONFIRM FUND TRANSFER -->
+  <div class="modal-overlay" id="modal-transfer-confirm">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Confirm Fund Transfer</h3>
+        <button class="modal-close" onclick="window.closeModal('modal-transfer-confirm')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: var(--info-bg); border-left: 4px solid var(--info); padding: 0.85rem; border-radius: var(--radius-sm); font-size: 0.85rem; margin-bottom: 1.25rem;">
+          Please review the recipient and amount carefully before executing this transaction.
+        </div>
+
+        <div class="receipt-row">
+          <span class="label">Debit Account:</span>
+          <span class="val" id="confirm-transfer-sender" style="font-family: monospace;">-</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Credit Recipient:</span>
+          <span class="val" id="confirm-transfer-receiver" style="font-family: monospace; color: var(--primary);">-</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Transfer Amount:</span>
+          <span class="val" id="confirm-transfer-amount" style="font-size: 1.1rem; color: var(--success);">-</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Transfer Fee:</span>
+          <span class="val" style="color: var(--success);">₹ 0.00 (Free)</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Remarks:</span>
+          <span class="val" id="confirm-transfer-remarks">-</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="window.closeModal('modal-transfer-confirm')">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btn-execute-transfer">Confirm & Execute Transfer</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- MODAL: TRANSACTION RECEIPT -->
+  <div class="modal-overlay" id="modal-receipt">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Transaction Receipt</h3>
+        <button class="modal-close" onclick="window.closeModal('modal-receipt')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="receipt-container">
+          <div class="receipt-header">
+            <div class="receipt-logo">SJNA BANK</div>
+            <div class="receipt-subtitle">Online Banking Transaction Simulator • Customer Copy</div>
+          </div>
+
+          <div class="receipt-status-banner">
+            ✓ TRANSACTION SUCCESSFUL
+          </div>
+
+          <div class="receipt-row">
+            <span class="label">Transaction Reference:</span>
+            <span class="val" id="receipt-txn-id" style="font-family: monospace;">-</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Date & Time:</span>
+            <span class="val" id="receipt-date">-</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Transaction Type:</span>
+            <span class="val" id="receipt-type">-</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Source Account:</span>
+            <span class="val" id="receipt-sender" style="font-family: monospace;">-</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Destination / Biller:</span>
+            <span class="val" id="receipt-receiver" style="font-family: monospace;">-</span>
+          </div>
+          <div class="receipt-row total">
+            <span class="label">Total Amount:</span>
+            <span class="val" id="receipt-amount">₹ 0.00</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Status:</span>
+            <span class="val" id="receipt-status" style="color: var(--success);">Successful</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="window.print()">🖨️ Print Receipt</button>
+        <button type="button" class="btn btn-primary" onclick="window.closeModal('modal-receipt')">Done</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Toast notification container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

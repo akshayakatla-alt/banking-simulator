@@ -1,0 +1,14 @@
+/.env
+/backend/.env
+/backend/build*/
+/backend/BankingSystem.exe
+/backend/app.log
+/backend/pgdata/
+/backend/pglog.log
+*.o
+/vcpkg/
+/backend-source.zip
+/backend-source-safe.zip
+/.vscode/
+/.postman/
+/backend/Crow/
